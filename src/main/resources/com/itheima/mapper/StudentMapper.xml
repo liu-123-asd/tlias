@@ -1,0 +1,141 @@
+<!--定义Mapper映射文件的约束和基本结构-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.StudentMapper">
+    <select id="list" resultType="com.itheima.pojo.Student">
+    select s.*,c.name clazzName
+    from student s
+    left join clazz c
+    on c.id = s.clazz_id
+    <where>
+        <if test="name!=null and name!=''">
+            s.name like concat('%',#{name},'%')
+        </if>
+        <if test="degree !=null">
+            and degree=#{degree}
+        </if>
+        <if test="clazzId !=null">
+            and clazz_id =#{clazzId}
+        </if>
+    </where>
+    </select>
+
+
+    <!-- 4.2 根据id删除学生 -->
+    <delete id="deleteById">
+        DELETE FROM student WHERE id = #{id}
+    </delete>
+
+
+    <!-- 4.3 新增学生 -->
+    <insert id="insert">
+        INSERT INTO student (
+        name, no, gender, phone, degree, clazz_id,
+        id_card, is_college, address, graduation_date,
+        create_time, update_time
+        ) VALUES (
+        #{name}, #{no}, #{gender}, #{phone}, #{degree}, #{clazzId},
+        <if test="idCard != null">#{idCard},</if>
+        <if test="isCollege != null">#{isCollege},</if>
+        <if test="address != null">#{address},</if>
+        <if test="graduationDate != null">#{graduationDate},</if>
+        #{createTime}, #{updateTime}
+        )
+    </insert>
+
+    <!-- 4.4 根据id查询学生 -->
+    <!-- 4.4 根据id查询完整学生信息 -->
+    <select id="getById" resultType="com.itheima.pojo.Student">
+        SELECT
+            id, name, no, gender, phone, degree, clazz_id clazzId,
+            id_card idCard, is_college isCollege, address, graduation_date graduationDate,
+            violation_count violationCount, violation_score violationScore,
+            create_time createTime, update_time updateTime
+        FROM student
+        WHERE id = #{id}
+    </select>
+
+
+    <!-- 4.5 修改学生 -->
+    <update id="update">
+        UPDATE student
+        SET
+        name = #{name},
+        no = #{no},
+        gender = #{gender},
+        phone = #{phone},
+        degree = #{degree},
+        clazz_id = #{clazzId},
+        violation_count = #{violationCount},
+        violation_score = #{violationScore},
+        update_time = #{updateTime}
+        <if test="idCard != null">, id_card = #{idCard}</if>
+        <if test="isCollege != null">, is_college = #{isCollege}</if>
+        <if test="address != null">, address = #{address}</if>
+        <if test="graduationDate != null">, graduation_date = #{graduationDate}</if>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量删除学生，in多id -->
+    <delete id="deleteBatch">
+        DELETE FROM student
+        WHERE id IN
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <update id="updateViolation">
+        UPDATE student
+        SET
+        name = #{name},
+        no = #{no},
+        gender = #{gender},
+        phone = #{phone},
+        degree = #{degree},
+        clazz_id = #{clazzId},
+        violation_count = #{violationCount},
+        violation_score = #{violationScore},
+        update_time = #{updateTime}
+        <if test="idCard != null">, id_card = #{idCard}</if>
+        <if test="isCollege != null">, is_college = #{isCollege}</if>
+        <if test="address != null">, address = #{address}</if>
+        <if test="graduationDate != null">, graduation_date = #{graduationDate}</if>
+        WHERE id = #{id}
+    </update>
+
+
+
+    <select id="countStudentDegreeData">
+        select
+            (case degree when 1 then '初中'
+                      when 2 then '高中'
+                      when 3 then '本科'
+                      when 4 then '硕士'
+                      when 5 then '博士'
+                      else '其他' end)  name,
+            count(*) value
+        from student group by degree
+        order by value
+    </select>
+
+
+    <select id="countStudentByClazz" resultType="java.util.Map">
+        SELECT
+            c.name AS clazzName,
+            COUNT(s.id) AS count
+        FROM clazz c
+                 LEFT JOIN student s ON c.id = s.clazz_id
+        GROUP BY c.id, c.name
+        ORDER BY c.id
+    </select>
+
+
+
+
+
+
+
+</mapper>

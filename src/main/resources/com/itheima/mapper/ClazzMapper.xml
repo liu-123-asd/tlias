@@ -1,0 +1,64 @@
+<!--定义Mapper映射文件的约束和基本结构-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.ClazzMapper">
+    <select id="list" resultType="com.itheima.pojo.Clazz">
+        select c.*, e.name masterName
+        from clazz c
+        left join emp e
+        on c.master_id = e.id
+        <where>
+            <if test="name != null and name != ''">
+                c.name like concat('%',#{name},'%')
+            </if>
+            <!-- 开课时间范围过滤，也是clazz表字段 -->
+            <if test="begin != null">
+               and c.begin_date &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                and c.end_date &lt;=#{end}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="deleteById">
+        delete from clazz where id = #{id}
+    </delete>
+
+
+    <insert id="add">
+    insert into clazz(name, room, begin_date, end_date, master_id, subject)
+    values (#{name},#{room},#{beginDate},#{endDate},#{masterId},#{subject})
+    </insert>
+
+
+    <select id="getclazzById">
+        select * from clazz where id=#{id};
+    </select>
+
+
+    <select id="countByClazzId" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM student WHERE clazz_id = #{clazzId}
+    </select>
+
+    <update id="update">
+        UPDATE clazz
+        SET
+        name = #{name},
+        room = #{room},
+        begin_date = #{beginDate},
+        end_date = #{endDate},
+        master_id = #{masterId},
+        update_time = #{updateTime},
+        <if test="subject != null">
+            subject = #{subject}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAll" resultType="com.itheima.pojo.Clazz">
+        select * from clazz;
+    </select>
+</mapper>
