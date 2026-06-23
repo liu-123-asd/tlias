@@ -133,4 +133,9 @@ public class EmpServiceImpl implements EmpService {
         return null;
     }
 
+    @Override
+    public List<Emp> findall() {
+       return empMapper.findall();
+    }
+
 }
