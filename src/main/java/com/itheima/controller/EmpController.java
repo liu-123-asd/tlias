@@ -34,7 +34,7 @@ public class EmpController {
             return  Result.success(pageResult);
         }
     */
-    @LogOperation
+
     @GetMapping
     public Result page(EmpQueryParam empQueryParam) {
         log.info("查询请求参数： {}", empQueryParam);

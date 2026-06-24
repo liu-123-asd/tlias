@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class OperateLog {
     private Integer id; //ID
     private Integer operateEmpId; //操作人ID
+    private String operateEmpName; // 操作人姓名，前端展示这个
     private LocalDateTime operateTime; //操作时间
     private String className; //操作类名
     private String methodName; //操作方法名
